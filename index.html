@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing on canvas</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="output"></div>
+    <canvas id="canvas"></canvas>
+    <br>
+    <input type="color" id="color">
+    <input type="button" value="Save" id="saveBtn">
+    <input type="button" value="Clear" id="clearBtn">
+    <br>
+    <img src="" alt="Canvas holder" width="300" height="200" id="holder">
+
+
+    <script>
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let output = document.getElementById('output');
+        canvas.width = 500;
+        canvas.height = 500;
+
+        window.onload = initiate;
+        let pos = { x: 0, y: 0 };
+        let defaultColor = 'black';
+        let color = document.getElementById('color');
+        color.addEventListener('change', function () {
+            color = event.target.value;
+        });
+        document.getElementById('saveBtn').addEventListener('click', function () {
+            let dataURL = canvas.toDataURL();
+            document.getElementById('holder').src = dataURL;
+        });
+        document.getElementById('clearBtn').addEventListener('click', function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        function initiate() {
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mousemove', savePosition);
+            canvas.addEventListener('mouseenter', savePosition);
+        }
+
+        function draw(event) {
+            if (event.buttons !== 1) return;
+            output.innerHTML = 'X = ' + pos.x + 'Y = ' + pos.y;
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            savePosition(event);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function savePosition(event) {
+            pos.x = event.pageX;
+            pos.y = event.pageY;
+        }
+    </script>
+</body>
+
+</html>
